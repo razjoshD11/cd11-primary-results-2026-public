@@ -1,0 +1,37 @@
+:root {
+  --color-bg: #ffffff;
+  --color-fg: #1a1a1a;
+  --color-muted: #6b6b6b;
+  --color-border: #e0e0e0;
+  --color-banner-bg: #fff3cd;
+  --color-banner-fg: #664d03;
+  --space-section: clamp(1rem, 0.6rem + 1.4vw, 2.5rem);
+  --radius: 4px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--color-fg);
+  background: var(--color-bg);
+  line-height: 1.5;
+}
+.topbar { padding: var(--space-section); border-bottom: 1px solid var(--color-border); }
+.topbar h1 { margin: 0 0 0.25rem; font-size: 1.6rem; font-weight: 700; }
+.topbar h2 { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 500; color: var(--color-muted); }
+.banner { background: var(--color-banner-bg); color: var(--color-banner-fg); padding: 0.7rem 1rem; border-radius: var(--radius); font-weight: 600; font-size: 0.9rem; }
+.meta { margin-top: 0.8rem; display: flex; gap: 1.5rem; font-size: 0.9rem; color: var(--color-muted); }
+.citywide-strip, .map-region { padding: var(--space-section); }
+.map-toggle { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.map-toggle button { padding: 0.45rem 0.95rem; border: 1px solid #ccc; background: white; border-radius: var(--radius); cursor: pointer; font: inherit; }
+.map-toggle button.active { background: var(--color-fg); color: white; border-color: var(--color-fg); }
+.map-canvas { height: 600px; border: 1px dashed #ccc; border-radius: var(--radius); display: grid; place-items: center; background: #fafafa; }
+.side-panel { position: fixed; right: 0; top: 0; width: 380px; height: 100vh; background: white; box-shadow: -2px 0 12px rgba(0,0,0,0.1); padding: 1.5rem; overflow-y: auto; }
+.side-panel.hidden { display: none; }
+.placeholder { color: var(--color-muted); font-style: italic; padding: 1rem; }
+footer { padding: var(--space-section); border-top: 1px solid var(--color-border); font-size: 0.85rem; color: var(--color-muted); }
+footer a { color: var(--color-fg); }
+.muted { color: var(--color-muted); }
+@media (max-width: 640px) {
+  .side-panel { width: 100%; }
+}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>San Francisco — June 2, 2026 Primary | US House CD-11</title>
+<meta name="description" content="Precinct-level preliminary results for the US House District 11 primary, June 2, 2026.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>San Francisco &mdash; June 2, 2026 Primary</h1>
+  <h2>US House CD-11</h2>
+  <div class="banner" id="status-banner">
+    PRELIMINARY &mdash; RESULTS WILL CHANGE AS BALLOTS ARE COUNTED
+  </div>
+  <div class="meta">
+    <span id="last-update">Last update: &mdash;</span>
+    <span id="ballots-counted">Ballots counted: &mdash;</span>
+  </div>
+</header>
+
+<section class="citywide-strip" id="citywide-strip">
+  <!-- Reports 1-3: citywide totals only, populated from summary.xml -->
+  <div class="placeholder">Citywide preliminary totals appear here at Report 1 (~8:45pm).</div>
+</section>
+
+<section class="map-region">
+  <div class="map-toggle">
+    <button data-granularity="precinct" class="active">Precinct view</button>
+    <button data-granularity="sup">Supervisor district view</button>
+    <button data-granularity="cd11">All CD-11</button>
+  </div>
+  <div id="results-map" class="map-canvas">
+    <div class="placeholder">Precinct-level data expected with Report 4 (approximately midnight).</div>
+  </div>
+  <aside id="candidate-detail" class="side-panel hidden"></aside>
+</section>
+
+<footer>
+  <p>Source: San Francisco Department of Elections. <a href="https://sfelections.org/results/20260602w/" target="_blank" rel="noopener">Official results page</a>.</p>
+  <p class="muted">Data updated automatically from machine-readable SF DoE releases. Preliminary until certified by the Department of Elections.</p>
+</footer>
+
+<script src="js/map.js"></script>
+</body>
+</html>
