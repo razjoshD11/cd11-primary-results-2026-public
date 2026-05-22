@@ -1,5 +1,5 @@
 {
-  "_comment": "Photos + 1-line bios for the public map side panel. Updated before June 2.",
+  "_comment": "Photos + 1-line bios for the public map side panel. Real headshots provided May 22 for Scott, Saikat, Connie, Marie. Ganezer still pending.",
   "WIENER, SCOTT": {
     "photo": "assets/candidate-photos/wiener.jpg",
     "bio": "California State Senator (SD-11)"
@@ -12,13 +12,12 @@
     "photo": "assets/candidate-photos/chan.jpg",
     "bio": "San Francisco Supervisor (District 1)"
   },
-  "HURABIELL, JOHN": {
+  "HURABIELL, MARIE": {
     "photo": "assets/candidate-photos/hurabiell.jpg",
     "bio": "Real estate executive"
   },
   "GANEZER, BRANDON": {
-    "photo": "assets/candidate-photos/ganezer.jpg",
-    "bio": "TBD — name placeholder; confirm from filing"
+    "bio": "Candidate — bio pending"
   },
   "Yes": { "bio": "Vote in favor of Proposition 50" },
   "No": { "bio": "Vote against Proposition 50" }
