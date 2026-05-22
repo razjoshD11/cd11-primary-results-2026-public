@@ -65,7 +65,22 @@
       }
       if (!candidates) {
         const cRes = await fetch(CANDIDATES_URL, { cache: "no-store" });
-        if (cRes.ok) candidates = await cRes.json();
+        if (cRes.ok) {
+          const raw = await cRes.json();
+          // Build a case-insensitive lookup with last-name fallback.
+          // SF DoE has emitted "WIENER, SCOTT" in past elections, but if the
+          // June 2 CVR shifts to "Wiener, Scott" or "Scott Wiener", the
+          // exact-match lookup would silently fail and the side panel would
+          // show fallback initials instead of real photos. This builds the
+          // tolerance in.
+          candidates = {};
+          for (const [key, value] of Object.entries(raw)) {
+            if (key.startsWith("_")) continue;
+            candidates[key.toUpperCase()] = value;
+            const lastName = key.split(",")[0].trim().toUpperCase();
+            if (lastName && !candidates[lastName]) candidates[lastName] = value;
+          }
+        }
       }
       const r = await fetch(DATA_URL, { cache: "no-store" });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -179,7 +194,7 @@
     const sortedCands = Object.entries(data.candidates || {}).sort(([, a], [, b]) => b - a);
     const rows = sortedCands.map(([name, votes]) => {
       const pct = (votes / total) * 100;
-      const meta = candidates?.[name] || {};
+      const meta = lookupCandidate(name);
       const photo = meta.photo
         ? `<img class="photo" src="${meta.photo}" alt="">`
         : `<div class="photo">${escapeHtml(initials(name))}</div>`;
@@ -221,6 +236,19 @@
 
   function initials(name) {
     return name.split(/[\s,]+/).filter(Boolean).slice(0, 2).map(s => s[0]?.toUpperCase() || "").join("");
+  }
+
+  function lookupCandidate(name) {
+    // Tolerant lookup: try exact-uppercase first, then last-name token.
+    if (!candidates || !name) return {};
+    const upper = name.toUpperCase().trim();
+    if (candidates[upper]) return candidates[upper];
+    // "Scott Wiener" or "WIENER, SCOTT" -> last name "WIENER"
+    const tokens = upper.split(/[\s,]+/).filter(Boolean);
+    for (const tok of tokens) {
+      if (candidates[tok]) return candidates[tok];
+    }
+    return {};
   }
 
   function formatTimestamp(iso) {
