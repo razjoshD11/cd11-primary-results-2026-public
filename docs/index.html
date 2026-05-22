@@ -5,36 +5,36 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>San Francisco — June 2, 2026 Primary | US House CD-11</title>
 <meta name="description" content="Precinct-level preliminary results for the US House District 11 primary, June 2, 2026.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <header class="topbar">
   <h1>San Francisco &mdash; June 2, 2026 Primary</h1>
   <h2>US House CD-11</h2>
-  <div class="banner" id="status-banner">
-    PRELIMINARY &mdash; RESULTS WILL CHANGE AS BALLOTS ARE COUNTED
-  </div>
+  <div class="banner" id="status-banner">PRELIMINARY &mdash; RESULTS WILL CHANGE AS BALLOTS ARE COUNTED</div>
   <div class="meta">
-    <span id="last-update">Last update: &mdash;</span>
-    <span id="ballots-counted">Ballots counted: &mdash;</span>
+    <span id="last-update">Last update: —</span>
+    <span id="ballots-counted">Ballots counted: —</span>
   </div>
 </header>
 
 <section class="citywide-strip" id="citywide-strip">
-  <!-- Reports 1-3: citywide totals only, populated from summary.xml -->
   <div class="placeholder">Citywide preliminary totals appear here at Report 1 (~8:45pm).</div>
 </section>
 
 <section class="map-region">
-  <div class="map-toggle">
-    <button data-granularity="precinct" class="active">Precinct view</button>
-    <button data-granularity="sup">Supervisor district view</button>
-    <button data-granularity="cd11">All CD-11</button>
+  <div class="map-toggle" role="tablist">
+    <button data-granularity="precinct" class="active" role="tab" aria-selected="true">Precinct view</button>
+    <button data-granularity="sup" role="tab" aria-selected="false">Supervisor district view</button>
+    <button data-granularity="cd11" role="tab" aria-selected="false">All CD-11</button>
   </div>
-  <div id="results-map" class="map-canvas">
-    <div class="placeholder">Precinct-level data expected with Report 4 (approximately midnight).</div>
-  </div>
-  <aside id="candidate-detail" class="side-panel hidden"></aside>
+  <div id="results-map" class="map-canvas"></div>
+  <aside id="candidate-detail" class="side-panel hidden">
+    <button class="close-btn" id="close-detail" aria-label="Close">&times;</button>
+    <h3 id="detail-title">Precinct</h3>
+    <div id="detail-body"></div>
+  </aside>
 </section>
 
 <footer>
@@ -42,6 +42,7 @@
   <p class="muted">Data updated automatically from machine-readable SF DoE releases. Preliminary until certified by the Department of Elections.</p>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="js/map.js"></script>
 </body>
 </html>

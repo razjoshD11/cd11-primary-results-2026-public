@@ -1,0 +1,25 @@
+{
+  "_comment": "Photos + 1-line bios for the public map side panel. Updated before June 2.",
+  "WIENER, SCOTT": {
+    "photo": "assets/candidate-photos/wiener.jpg",
+    "bio": "California State Senator (SD-11)"
+  },
+  "CHAKRABARTI, SAIKAT": {
+    "photo": "assets/candidate-photos/chakrabarti.jpg",
+    "bio": "Former AOC chief of staff; tech entrepreneur"
+  },
+  "CHAN, CONNIE": {
+    "photo": "assets/candidate-photos/chan.jpg",
+    "bio": "San Francisco Supervisor (District 1)"
+  },
+  "HURABIELL, JOHN": {
+    "photo": "assets/candidate-photos/hurabiell.jpg",
+    "bio": "Real estate executive"
+  },
+  "GANEZER, BRANDON": {
+    "photo": "assets/candidate-photos/ganezer.jpg",
+    "bio": "TBD — name placeholder; confirm from filing"
+  },
+  "Yes": { "bio": "Vote in favor of Proposition 50" },
+  "No": { "bio": "Vote against Proposition 50" }
+}
