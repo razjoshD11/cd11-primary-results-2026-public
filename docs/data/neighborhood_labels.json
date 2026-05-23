@@ -1,0 +1,167 @@
+[
+  {
+    "name": "Bayview Hunters Point",
+    "lat": 37.741412,
+    "lon": -122.378619
+  },
+  {
+    "name": "Bernal Heights",
+    "lat": 37.743937,
+    "lon": -122.407539
+  },
+  {
+    "name": "Castro/Upper Market",
+    "lat": 37.759283,
+    "lon": -122.440942
+  },
+  {
+    "name": "Financial District/South Beach",
+    "lat": 37.792115,
+    "lon": -122.396215
+  },
+  {
+    "name": "Glen Park",
+    "lat": 37.739371,
+    "lon": -122.439433
+  },
+  {
+    "name": "Haight Ashbury",
+    "lat": 37.763256,
+    "lon": -122.449709
+  },
+  {
+    "name": "Hayes Valley",
+    "lat": 37.779075,
+    "lon": -122.423462
+  },
+  {
+    "name": "Inner Richmond",
+    "lat": 37.783656,
+    "lon": -122.469842
+  },
+  {
+    "name": "Inner Sunset",
+    "lat": 37.764619,
+    "lon": -122.473921
+  },
+  {
+    "name": "Japantown",
+    "lat": 37.784381,
+    "lon": -122.442942
+  },
+  {
+    "name": "Lakeshore",
+    "lat": 37.722063,
+    "lon": -122.49555
+  },
+  {
+    "name": "Lincoln Park",
+    "lat": 37.783824,
+    "lon": -122.501252
+  },
+  {
+    "name": "Lone Mountain/USF",
+    "lat": 37.774304,
+    "lon": -122.446961
+  },
+  {
+    "name": "Marina",
+    "lat": 37.799046,
+    "lon": -122.4342
+  },
+  {
+    "name": "Mission",
+    "lat": 37.752306,
+    "lon": -122.419562
+  },
+  {
+    "name": "Mission Bay",
+    "lat": 37.771447,
+    "lon": -122.399625
+  },
+  {
+    "name": "Nob Hill",
+    "lat": 37.789208,
+    "lon": -122.419618
+  },
+  {
+    "name": "Noe Valley",
+    "lat": 37.74455,
+    "lon": -122.445002
+  },
+  {
+    "name": "North Beach",
+    "lat": 37.807988,
+    "lon": -122.414127
+  },
+  {
+    "name": "Oceanview/Merced/Ingleside",
+    "lat": 37.723566,
+    "lon": -122.458385
+  },
+  {
+    "name": "Outer Richmond",
+    "lat": 37.778605,
+    "lon": -122.474904
+  },
+  {
+    "name": "Pacific Heights",
+    "lat": 37.79201,
+    "lon": -122.431092
+  },
+  {
+    "name": "Potrero Hill",
+    "lat": 37.764053,
+    "lon": -122.403968
+  },
+  {
+    "name": "Presidio",
+    "lat": 37.798872,
+    "lon": -122.475525
+  },
+  {
+    "name": "Presidio Heights",
+    "lat": 37.787155,
+    "lon": -122.456426
+  },
+  {
+    "name": "Russian Hill",
+    "lat": 37.794688,
+    "lon": -122.4207
+  },
+  {
+    "name": "South of Market",
+    "lat": 37.775438,
+    "lon": -122.40177
+  },
+  {
+    "name": "Sunset/Parkside",
+    "lat": 37.750391,
+    "lon": -122.478897
+  },
+  {
+    "name": "Tenderloin",
+    "lat": 37.786153,
+    "lon": -122.413887
+  },
+  {
+    "name": "Treasure Island",
+    "lat": 37.819257,
+    "lon": -122.369128
+  },
+  {
+    "name": "Twin Peaks",
+    "lat": 37.753768,
+    "lon": -122.451192
+  },
+  {
+    "name": "West of Twin Peaks",
+    "lat": 37.72643,
+    "lon": -122.451158
+  },
+  {
+    "name": "Western Addition",
+    "lat": 37.784179,
+    "lon": -122.426142
+  }
+]
