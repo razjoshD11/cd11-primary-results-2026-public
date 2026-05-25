@@ -1,58 +1,63 @@
 [
   {
     "name": "Bayview Hunters Point",
-    "lat": 37.741412,
-    "lon": -122.378619
+    "lat": 37.73071,
+    "lon": -122.382968
   },
   {
     "name": "Bernal Heights",
-    "lat": 37.743937,
-    "lon": -122.407539
+    "lat": 37.740183,
+    "lon": -122.415477
   },
   {
     "name": "Castro/Upper Market",
-    "lat": 37.759283,
-    "lon": -122.440942
+    "lat": 37.762757,
+    "lon": -122.434615
+  },
+  {
+    "name": "Chinatown",
+    "lat": 37.795072,
+    "lon": -122.405662
   },
   {
     "name": "Financial District/South Beach",
-    "lat": 37.792115,
-    "lon": -122.396215
+    "lat": 37.793051,
+    "lon": -122.398632
   },
   {
     "name": "Glen Park",
-    "lat": 37.739371,
-    "lon": -122.439433
+    "lat": 37.738498,
+    "lon": -122.433661
   },
   {
     "name": "Haight Ashbury",
-    "lat": 37.763256,
-    "lon": -122.449709
+    "lat": 37.767512,
+    "lon": -122.448884
   },
   {
     "name": "Hayes Valley",
-    "lat": 37.779075,
-    "lon": -122.423462
+    "lat": 37.775321,
+    "lon": -122.430305
   },
   {
     "name": "Inner Richmond",
-    "lat": 37.783656,
-    "lon": -122.469842
+    "lat": 37.779939,
+    "lon": -122.465785
   },
   {
     "name": "Inner Sunset",
-    "lat": 37.764619,
-    "lon": -122.473921
+    "lat": 37.760798,
+    "lon": -122.460018
   },
   {
     "name": "Japantown",
-    "lat": 37.784381,
-    "lon": -122.442942
+    "lat": 37.784722,
+    "lon": -122.439345
   },
   {
     "name": "Lakeshore",
     "lat": 37.722063,
-    "lon": -122.49555
+    "lon": -122.490632
   },
   {
     "name": "Lincoln Park",
@@ -61,38 +66,38 @@
   },
   {
     "name": "Lone Mountain/USF",
-    "lat": 37.774304,
-    "lon": -122.446961
+    "lat": 37.777705,
+    "lon": -122.45018
   },
   {
     "name": "Marina",
-    "lat": 37.799046,
-    "lon": -122.4342
+    "lat": 37.801923,
+    "lon": -122.436878
   },
   {
     "name": "Mission",
-    "lat": 37.752306,
-    "lon": -122.419562
+    "lat": 37.761632,
+    "lon": -122.415507
   },
   {
     "name": "Mission Bay",
-    "lat": 37.771447,
-    "lon": -122.399625
+    "lat": 37.772978,
+    "lon": -122.390572
   },
   {
     "name": "Nob Hill",
-    "lat": 37.789208,
-    "lon": -122.419618
+    "lat": 37.792874,
+    "lon": -122.413276
   },
   {
     "name": "Noe Valley",
-    "lat": 37.74455,
-    "lon": -122.445002
+    "lat": 37.74898,
+    "lon": -122.434339
   },
   {
     "name": "North Beach",
-    "lat": 37.807988,
-    "lon": -122.414127
+    "lat": 37.803984,
+    "lon": -122.409624
   },
   {
     "name": "Oceanview/Merced/Ingleside",
@@ -100,49 +105,59 @@
     "lon": -122.458385
   },
   {
+    "name": "Outer Mission",
+    "lat": 37.732291,
+    "lon": -122.433096
+  },
+  {
     "name": "Outer Richmond",
-    "lat": 37.778605,
-    "lon": -122.474904
+    "lat": 37.777263,
+    "lon": -122.492973
   },
   {
     "name": "Pacific Heights",
-    "lat": 37.79201,
-    "lon": -122.431092
+    "lat": 37.790827,
+    "lon": -122.433464
   },
   {
     "name": "Potrero Hill",
-    "lat": 37.764053,
-    "lon": -122.403968
+    "lat": 37.759623,
+    "lon": -122.39379
   },
   {
     "name": "Presidio",
-    "lat": 37.798872,
-    "lon": -122.475525
+    "lat": 37.798909,
+    "lon": -122.464537
   },
   {
     "name": "Presidio Heights",
-    "lat": 37.787155,
-    "lon": -122.456426
+    "lat": 37.786209,
+    "lon": -122.449668
   },
   {
     "name": "Russian Hill",
-    "lat": 37.794688,
-    "lon": -122.4207
+    "lat": 37.801678,
+    "lon": -122.418447
+  },
+  {
+    "name": "Seacliff",
+    "lat": 37.787194,
+    "lon": -122.488945
   },
   {
     "name": "South of Market",
-    "lat": 37.775438,
-    "lon": -122.40177
+    "lat": 37.776913,
+    "lon": -122.406178
   },
   {
     "name": "Sunset/Parkside",
-    "lat": 37.750391,
-    "lon": -122.478897
+    "lat": 37.749423,
+    "lon": -122.492882
   },
   {
     "name": "Tenderloin",
-    "lat": 37.786153,
-    "lon": -122.413887
+    "lat": 37.781662,
+    "lon": -122.415865
   },
   {
     "name": "Treasure Island",
@@ -151,17 +166,17 @@
   },
   {
     "name": "Twin Peaks",
-    "lat": 37.753768,
-    "lon": -122.451192
+    "lat": 37.752227,
+    "lon": -122.449447
   },
   {
     "name": "West of Twin Peaks",
-    "lat": 37.72643,
-    "lon": -122.451158
+    "lat": 37.735276,
+    "lon": -122.458057
   },
   {
     "name": "Western Addition",
-    "lat": 37.784179,
-    "lon": -122.426142
+    "lat": 37.782733,
+    "lon": -122.431802
   }
 ]
