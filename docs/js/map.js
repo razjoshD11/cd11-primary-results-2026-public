@@ -222,10 +222,8 @@
   // (2) greedy collision-avoidance recomputed on every zoom/pan, so two names
   // never overlap. As you zoom in, screen boxes spread apart and more appear.
   let labelMarkers = [];          // [{name, latlng, marker}]
-  const LABEL_MIN_ZOOM = 12;      // below this: no neighborhood labels at all
-  const LABEL_CHAR_PX = 5.8;      // approx px per uppercase char at the label font
-  const LABEL_PAD_X = 12;         // horizontal gap kept clear around each label (px)
-  const LABEL_PAD_Y = 9;          // vertical gap kept clear (px)
+  const LABEL_MIN_ZOOM = 13;      // below this: no neighborhood labels at all
+  const LABEL_GAP = 7;            // min clear gap kept around each label (px)
   const LABEL_OFFSCREEN_MARGIN = 40;
 
   function buildLabels() {
@@ -253,32 +251,43 @@
   function updateLabelVisibility() {
     if (!leafletMap || !labelMarkers.length) return;
     const showAny = leafletMap.getZoom() >= LABEL_MIN_ZOOM;
-    const size = leafletMap.getSize();
-    const placed = [];  // bounding boxes (screen px) of labels already shown
 
+    const els = [];
     for (const lm of labelMarkers) {
       const el = lm.marker.getElement();
-      if (!el) continue;
-      let visible = false;
+      if (el) els.push(el);
+    }
+    if (!showAny) {
+      for (const el of els) el.style.display = "none";
+      return;
+    }
 
-      if (showAny) {
-        const pt = leafletMap.latLngToContainerPoint(lm.latlng);
-        const onScreen =
-          pt.x > -LABEL_OFFSCREEN_MARGIN && pt.x < size.x + LABEL_OFFSCREEN_MARGIN &&
-          pt.y > -LABEL_OFFSCREEN_MARGIN && pt.y < size.y + LABEL_OFFSCREEN_MARGIN;
-        if (onScreen) {
-          const halfW = (lm.name.length * LABEL_CHAR_PX) / 2 + LABEL_PAD_X;
-          const halfH = 6 + LABEL_PAD_Y;
-          const box = {
-            minX: pt.x - halfW, maxX: pt.x + halfW,
-            minY: pt.y - halfH, maxY: pt.y + halfH,
-          };
-          const collides = placed.some((b) =>
-            !(box.maxX < b.minX || box.minX > b.maxX || box.maxY < b.minY || box.minY > b.maxY));
-          if (!collides) {
-            placed.push(box);
-            visible = true;
-          }
+    // Show all so each has a real painted rect, then read them in one batch
+    // (avoids the center-vs-anchor guesswork — getBoundingClientRect is the
+    // ground truth for where the text actually sits). Synchronous: no flicker.
+    for (const el of els) el.style.display = "";
+    const mapRect = leafletMap.getContainer().getBoundingClientRect();
+    const measured = els.map((el) => ({ el, r: el.getBoundingClientRect() }));
+
+    const placed = [];  // accepted label rects (viewport px), padded by the gap
+    for (const { el, r } of measured) {
+      let visible = false;
+      const onMap =
+        r.width > 0 &&
+        r.right > mapRect.left - LABEL_OFFSCREEN_MARGIN &&
+        r.left < mapRect.right + LABEL_OFFSCREEN_MARGIN &&
+        r.bottom > mapRect.top - LABEL_OFFSCREEN_MARGIN &&
+        r.top < mapRect.bottom + LABEL_OFFSCREEN_MARGIN;
+      if (onMap) {
+        const box = {
+          minX: r.left - LABEL_GAP, maxX: r.right + LABEL_GAP,
+          minY: r.top - LABEL_GAP, maxY: r.bottom + LABEL_GAP,
+        };
+        const collides = placed.some((b) =>
+          !(box.maxX < b.minX || box.minX > b.maxX || box.maxY < b.minY || box.minY > b.maxY));
+        if (!collides) {
+          placed.push(box);
+          visible = true;
         }
       }
       el.style.display = visible ? "" : "none";
