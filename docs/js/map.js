@@ -120,8 +120,18 @@
     els.ballotsCounted.textContent = `Ballots counted: ${data.progress?.counted?.toLocaleString() || "—"}`;
     renderTurnout(data.turnout);
 
-    // Reflect certification both ways — never latch on "CERTIFIED FINAL".
-    if (data.certified) {
+    // Awaiting state: pre-poll-close, Logic & Accuracy test CVR, or any drop
+    // with no results yet. Show a calm waiting banner instead of a misleading
+    // "PRELIMINARY" with an empty map.
+    const awaiting =
+      data.status === "Awaiting results" ||
+      ((data.candidates || []).length === 0 && (data.precincts || []).length === 0);
+
+    // Reflect certification all three ways — never latch on "CERTIFIED FINAL".
+    if (awaiting) {
+      els.statusBanner.textContent = "AWAITING RESULTS — POLLS CLOSE AT 8 PM, JUNE 2";
+      els.statusBanner.classList.remove("certified");
+    } else if (data.certified) {
       els.statusBanner.textContent = "CERTIFIED FINAL";
       els.statusBanner.classList.add("certified");
     } else {
