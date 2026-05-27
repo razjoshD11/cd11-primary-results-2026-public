@@ -24,6 +24,7 @@
   const els = {
     lastUpdate: document.getElementById("last-update"),
     ballotsCounted: document.getElementById("ballots-counted"),
+    turnout: document.getElementById("turnout"),
     citywide: document.getElementById("citywide-strip"),
     map: document.getElementById("results-map"),
     statusBanner: document.getElementById("status-banner"),
@@ -117,6 +118,7 @@
 
     els.lastUpdate.textContent = `Last update: ${formatTimestamp(data.timestamp)}`;
     els.ballotsCounted.textContent = `Ballots counted: ${data.progress?.counted?.toLocaleString() || "—"}`;
+    renderTurnout(data.turnout);
 
     // Reflect certification both ways — never latch on "CERTIFIED FINAL".
     if (data.certified) {
@@ -168,6 +170,24 @@
     return sortedEntries;
   }
 
+  // Turnout = ballots cast / registered voters. Prefer CD-11 (available once
+  // precinct/SOV data lands at Report 4); fall back to citywide SF (available
+  // from Report 1). Either may be null early in the night.
+  function renderTurnout(turnout) {
+    if (!els.turnout) return;
+    const t = turnout || {};
+    const block = t.cd11 || t.citywide;
+    if (!block || !block.registered) {
+      els.turnout.textContent = "Turnout: —";
+      return;
+    }
+    const scope = t.cd11 ? "CD-11" : "citywide";
+    const cast = (block.ballots_cast || 0).toLocaleString();
+    const reg = block.registered.toLocaleString();
+    const pct = block.pct != null ? (block.pct * 100).toFixed(1) + "%" : "—";
+    els.turnout.textContent = `Turnout (${scope}): ${cast} — ${pct} of ${reg} registered`;
+  }
+
   function renderCitywide(cands) {
     if (!cands.length) return;
     const total = cands.reduce((acc, c) => acc + (c.votes || 0), 0) || 1;
@@ -177,7 +197,7 @@
     els.citywide.innerHTML = `<strong>${label}</strong> ` +
       shown.map(([name, votes]) => `<span class="citywide-row">
         <span class="swatch" style="background:${leaderColorMap.get(name)}"></span>
-        ${escapeHtml(name)} ${((votes / total) * 100).toFixed(1)}%
+        ${escapeHtml(name)} ${((votes / total) * 100).toFixed(1)}% (${votes.toLocaleString()})
       </span>`).join("");
   }
 
