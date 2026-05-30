@@ -48,14 +48,27 @@
   let legendControl = null;
   let displayConfig = { mode: "all" };
   let precinctToSD = new Map();  // precinct id -> supervisor_district (from precinct GeoJSON)
-  let nbhdLabels = null;         // [{name, lat, lon}]
-  let labelLayer = null;         // always-on neighborhood name labels
 
   function initMap() {
     leafletMap = L.map(els.map, { zoomControl: true, scrollWheelZoom: true }).setView([37.7649, -122.4394], 12);
     L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
       attribution: "&copy; OpenStreetMap, &copy; CARTO",
       subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(leafletMap);
+    // Street + place labels drawn ABOVE the choropleth so they stay legible.
+    // CARTO's label cartography is zoom-progressive on its own: neighborhood
+    // names when zoomed out, major streets at mid zoom, and smaller residential
+    // streets only when zoomed in tight. A dedicated pane above the choropleth
+    // (overlayPane z-index 400) with pointer-events off keeps precinct clicks
+    // working underneath.
+    leafletMap.createPane("labels");
+    leafletMap.getPane("labels").style.zIndex = 450;
+    leafletMap.getPane("labels").style.pointerEvents = "none";
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
+      attribution: "",
+      subdomains: "abcd",
+      pane: "labels",
       maxZoom: 19,
     }).addTo(leafletMap);
   }
@@ -83,10 +96,6 @@
         precinctToSD = new Map(
           (geo.precinct.features || []).map((f) => [f.properties?.precinct, f.properties?.supervisor_district])
         );
-      }
-      if (!nbhdLabels) {
-        const lRes = await fetch("./data/neighborhood_labels.json", { cache: "no-store" });
-        if (lRes.ok) { nbhdLabels = await lRes.json(); buildLabels(); }
       }
       buildLayers();
 
@@ -226,82 +235,6 @@
       });
     }
     showActiveLayer();
-  }
-
-  // Neighborhood name labels: declutter by (1) hiding below a zoom floor and
-  // (2) greedy collision-avoidance recomputed on every zoom/pan, so two names
-  // never overlap. As you zoom in, screen boxes spread apart and more appear.
-  let labelMarkers = [];          // [{name, latlng, marker}]
-  const LABEL_MIN_ZOOM = 13;      // below this: no neighborhood labels at all
-  const LABEL_GAP = 7;            // min clear gap kept around each label (px)
-  const LABEL_OFFSCREEN_MARGIN = 40;
-
-  function buildLabels() {
-    if (!leafletMap || !nbhdLabels || labelLayer) return;
-    labelLayer = L.layerGroup();
-    labelMarkers = [];
-    for (const lab of nbhdLabels) {
-      const icon = L.divIcon({
-        className: "nbhd-label",
-        html: escapeHtml(lab.name),
-        iconSize: [0, 0],   // let the text size itself; anchor at the point
-      });
-      const marker = L.marker([lab.lat, lab.lon], { icon, interactive: false, keyboard: false });
-      marker.addTo(labelLayer);
-      labelMarkers.push({ name: lab.name, latlng: L.latLng(lab.lat, lab.lon), marker });
-    }
-    labelLayer.addTo(leafletMap);
-    leafletMap.on("zoomend moveend", updateLabelVisibility);
-    updateLabelVisibility();
-  }
-
-  // Show the maximum set of labels that fit without any two overlapping, given
-  // the current zoom/center. Recomputed live, so the map stays uncluttered at
-  // every zoom level. Placement is greedy in list order (stable, no flicker).
-  function updateLabelVisibility() {
-    if (!leafletMap || !labelMarkers.length) return;
-    const showAny = leafletMap.getZoom() >= LABEL_MIN_ZOOM;
-
-    const els = [];
-    for (const lm of labelMarkers) {
-      const el = lm.marker.getElement();
-      if (el) els.push(el);
-    }
-    if (!showAny) {
-      for (const el of els) el.style.display = "none";
-      return;
-    }
-
-    // Show all so each has a real painted rect, then read them in one batch
-    // (avoids the center-vs-anchor guesswork — getBoundingClientRect is the
-    // ground truth for where the text actually sits). Synchronous: no flicker.
-    for (const el of els) el.style.display = "";
-    const mapRect = leafletMap.getContainer().getBoundingClientRect();
-    const measured = els.map((el) => ({ el, r: el.getBoundingClientRect() }));
-
-    const placed = [];  // accepted label rects (viewport px), padded by the gap
-    for (const { el, r } of measured) {
-      let visible = false;
-      const onMap =
-        r.width > 0 &&
-        r.right > mapRect.left - LABEL_OFFSCREEN_MARGIN &&
-        r.left < mapRect.right + LABEL_OFFSCREEN_MARGIN &&
-        r.bottom > mapRect.top - LABEL_OFFSCREEN_MARGIN &&
-        r.top < mapRect.bottom + LABEL_OFFSCREEN_MARGIN;
-      if (onMap) {
-        const box = {
-          minX: r.left - LABEL_GAP, maxX: r.right + LABEL_GAP,
-          minY: r.top - LABEL_GAP, maxY: r.bottom + LABEL_GAP,
-        };
-        const collides = placed.some((b) =>
-          !(box.maxX < b.minX || box.minX > b.maxX || box.maxY < b.minY || box.minY > b.maxY));
-        if (!collides) {
-          placed.push(box);
-          visible = true;
-        }
-      }
-      el.style.display = visible ? "" : "none";
-    }
   }
 
   function showActiveLayer() {
