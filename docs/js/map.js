@@ -48,6 +48,8 @@
   let legendControl = null;
   let displayConfig = { mode: "all" };
   let precinctToSD = new Map();  // precinct id -> supervisor_district (from precinct GeoJSON)
+  let selectedLayer = null;      // currently clicked feature (border-highlighted)
+  const SELECTED_STYLE = { weight: 4, color: "#f89828" };  // border-only selection highlight
 
   function initMap() {
     leafletMap = L.map(els.map, { zoomControl: true, scrollWheelZoom: true }).setView([37.7649, -122.4394], 12);
@@ -78,12 +80,13 @@
       els.toggleButtons.forEach((b) => { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
       btn.classList.add("active");
       btn.setAttribute("aria-selected", "true");
+      clearSelection();
       granularity = btn.dataset.granularity;
       showActiveLayer();
       renderLegend();
     });
   });
-  els.closeDetail.addEventListener("click", () => els.detail.classList.add("hidden"));
+  els.closeDetail.addEventListener("click", () => { els.detail.classList.add("hidden"); clearSelection(); });
 
   async function tick() {
     try {
@@ -229,7 +232,7 @@
       layers[key] = L.geoJSON(geo[key], {
         style: (feature) => styleFor(key, feature),
         onEachFeature: (feature, layer) => {
-          layer.on("click", () => openPanel(key, feature.properties || {}));
+          layer.on("click", () => { selectFeature(layer); openPanel(key, feature.properties || {}); });
           layer.bindTooltip(tooltipFor(key, feature.properties || {}), { sticky: true });
         },
       });
@@ -253,6 +256,29 @@
 
   function restyleActive() {
     if (activeKey && layers[activeKey]) layers[activeKey].setStyle((feature) => styleFor(activeKey, feature));
+    applySelection();
+  }
+
+  // Selection: highlight only the clicked feature's border (fill stays the
+  // leader color). resetStyle() returns a feature to its computed styleFor.
+  function applySelection() {
+    if (selectedLayer) {
+      selectedLayer.setStyle(SELECTED_STYLE);
+      if (selectedLayer.bringToFront) selectedLayer.bringToFront();
+    }
+  }
+  function selectFeature(layer) {
+    if (selectedLayer && selectedLayer !== layer && activeKey && layers[activeKey]) {
+      try { layers[activeKey].resetStyle(selectedLayer); } catch (e) { /* empty */ }
+    }
+    selectedLayer = layer;
+    applySelection();
+  }
+  function clearSelection() {
+    if (selectedLayer && activeKey && layers[activeKey]) {
+      try { layers[activeKey].resetStyle(selectedLayer); } catch (e) { /* empty */ }
+    }
+    selectedLayer = null;
   }
 
   // Leader for a given layer feature.
