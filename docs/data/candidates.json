@@ -1,8 +1,7 @@
 {
   "_comment": "Photos + 1-line bios for the public map side panel. Real headshots provided May 22 for Scott, Saikat, Connie, Marie. Ganezer still pending.",
   "_display": {
-    "mode": "featured",
-    "featured": ["WIENER, SCOTT", "CHAN, CONNIE", "CHAKRABARTI, SAIKAT", "HURABIELL, MARIE", "GANEZER, BRANDON"]
+    "mode": "all"
   },
   "WIENER, SCOTT": {
     "photo": "assets/candidate-photos/wiener.jpg",
