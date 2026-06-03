@@ -1,13 +1,4 @@
 # robots.txt for the CD-11 public results map.
-#
-# Pre-election (today through ~June 1): we don't want this indexed yet because
-# data files are placeholder (Nov 2025 dry-run content).
-#
-# On June 1, this entire file gets replaced with a permissive policy:
-#
-#   User-agent: *
-#   Allow: /
-#
-# Until then:
+# Election night (June 2, 2026): live results published — indexing enabled.
 User-agent: *
-Disallow: /
+Allow: /
