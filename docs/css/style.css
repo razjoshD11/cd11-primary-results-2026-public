@@ -46,6 +46,21 @@ path.leaflet-interactive:focus { outline: none; }
 .toggle-label { align-self: center; font-size: 0.85rem; color: var(--color-muted); margin-right: 0.15rem; }
 .legend-gradient { height: 12px; width: 170px; border-radius: 2px; margin: 5px 0 3px; border: 1px solid #bbb; }
 .legend-scale { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--color-muted); }
+/* Curated neighborhood labels: 0-size icon, text centered on the anchor with a
+   white halo so it stays legible over the colored choropleth. */
+.nhood-label { width: 0; height: 0; }
+.nhood-label span {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #1f1f1f;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 4px #fff, 0 0 6px #fff;
+  pointer-events: none;
+}
 .side-panel {
   position: fixed; right: 0; top: 0; width: 400px; height: 100vh; background: white;
   box-shadow: -2px 0 12px rgba(0,0,0,0.1); padding: 1.25rem 1.5rem; overflow-y: auto; z-index: 1000;

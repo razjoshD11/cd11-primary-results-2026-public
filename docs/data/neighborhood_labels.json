@@ -1,182 +1,142 @@
 [
   {
-    "name": "Bayview Hunters Point",
-    "lat": 37.73071,
-    "lon": -122.382968
+    "name": "Bayview / Hunters Pt",
+    "lat": 37.73169,
+    "lon": -122.38565
   },
   {
     "name": "Bernal Heights",
-    "lat": 37.740183,
-    "lon": -122.415477
-  },
-  {
-    "name": "Castro/Upper Market",
-    "lat": 37.762757,
-    "lon": -122.434615
+    "lat": 37.74024,
+    "lon": -122.41548
   },
   {
     "name": "Chinatown",
-    "lat": 37.795072,
-    "lon": -122.405662
+    "lat": 37.79537,
+    "lon": -122.4071
   },
   {
-    "name": "Financial District/South Beach",
-    "lat": 37.793051,
-    "lon": -122.398632
+    "name": "Downtown",
+    "lat": 37.78309,
+    "lon": -122.41607
+  },
+  {
+    "name": "Financial District",
+    "lat": 37.79103,
+    "lon": -122.39804
   },
   {
     "name": "Glen Park",
-    "lat": 37.738498,
-    "lon": -122.433661
+    "lat": 37.73858,
+    "lon": -122.43413
   },
   {
-    "name": "Haight Ashbury",
-    "lat": 37.767512,
-    "lon": -122.448884
+    "name": "Golden Gate Park",
+    "lat": 37.7694,
+    "lon": -122.4862
+  },
+  {
+    "name": "Haight",
+    "lat": 37.76847,
+    "lon": -122.44633
   },
   {
     "name": "Hayes Valley",
-    "lat": 37.775321,
-    "lon": -122.430305
+    "lat": 37.77525,
+    "lon": -122.42907
   },
   {
-    "name": "Inner Richmond",
-    "lat": 37.779939,
-    "lon": -122.465785
+    "name": "Ingleside",
+    "lat": 37.71944,
+    "lon": -122.46545
   },
   {
-    "name": "Inner Sunset",
-    "lat": 37.760798,
-    "lon": -122.460018
-  },
-  {
-    "name": "Japantown",
-    "lat": 37.784722,
-    "lon": -122.439345
-  },
-  {
-    "name": "Lakeshore",
-    "lat": 37.722063,
-    "lon": -122.490632
-  },
-  {
-    "name": "Lincoln Park",
-    "lat": 37.783824,
-    "lon": -122.501252
-  },
-  {
-    "name": "Lone Mountain/USF",
-    "lat": 37.777705,
-    "lon": -122.45018
+    "name": "Lake Merced",
+    "lat": 37.7196,
+    "lon": -122.49008
   },
   {
     "name": "Marina",
-    "lat": 37.801923,
-    "lon": -122.436878
+    "lat": 37.80112,
+    "lon": -122.43569
   },
   {
-    "name": "Mission",
-    "lat": 37.761632,
-    "lon": -122.415507
-  },
-  {
-    "name": "Mission Bay",
-    "lat": 37.772978,
-    "lon": -122.390572
+    "name": "Mission District",
+    "lat": 37.75986,
+    "lon": -122.41561
   },
   {
     "name": "Nob Hill",
-    "lat": 37.792874,
-    "lon": -122.413276
+    "lat": 37.79238,
+    "lon": -122.41495
   },
   {
     "name": "Noe Valley",
-    "lat": 37.74898,
-    "lon": -122.434339
+    "lat": 37.74834,
+    "lon": -122.43452
   },
   {
     "name": "North Beach",
-    "lat": 37.803984,
-    "lon": -122.409624
-  },
-  {
-    "name": "Oceanview/Merced/Ingleside",
-    "lat": 37.723566,
-    "lon": -122.458385
-  },
-  {
-    "name": "Outer Mission",
-    "lat": 37.732291,
-    "lon": -122.433096
-  },
-  {
-    "name": "Outer Richmond",
-    "lat": 37.777263,
-    "lon": -122.492973
+    "lat": 37.80482,
+    "lon": -122.41002
   },
   {
     "name": "Pacific Heights",
-    "lat": 37.790827,
-    "lon": -122.433464
+    "lat": 37.79064,
+    "lon": -122.43459
   },
   {
     "name": "Potrero Hill",
-    "lat": 37.759623,
-    "lon": -122.39379
+    "lat": 37.75881,
+    "lon": -122.39402
   },
   {
     "name": "Presidio",
-    "lat": 37.798909,
-    "lon": -122.464537
+    "lat": 37.79746,
+    "lon": -122.4664
   },
   {
     "name": "Presidio Heights",
-    "lat": 37.786209,
-    "lon": -122.449668
+    "lat": 37.78209,
+    "lon": -122.45009
+  },
+  {
+    "name": "Richmond District",
+    "lat": 37.7789,
+    "lon": -122.48606
   },
   {
     "name": "Russian Hill",
-    "lat": 37.801678,
-    "lon": -122.418447
-  },
-  {
-    "name": "Seacliff",
-    "lat": 37.787194,
-    "lon": -122.488945
+    "lat": 37.80031,
+    "lon": -122.41931
   },
   {
     "name": "South of Market",
-    "lat": 37.776913,
-    "lon": -122.406178
+    "lat": 37.77407,
+    "lon": -122.39975
   },
   {
-    "name": "Sunset/Parkside",
-    "lat": 37.749423,
-    "lon": -122.492882
+    "name": "Sunset District",
+    "lat": 37.75353,
+    "lon": -122.48475
   },
   {
-    "name": "Tenderloin",
-    "lat": 37.781662,
-    "lon": -122.415865
-  },
-  {
-    "name": "Treasure Island",
-    "lat": 37.819257,
-    "lon": -122.369128
+    "name": "The Castro",
+    "lat": 37.76259,
+    "lon": -122.43381
   },
   {
     "name": "Twin Peaks",
-    "lat": 37.752227,
-    "lon": -122.449447
+    "lat": 37.75227,
+    "lon": -122.44957
   },
   {
-    "name": "West of Twin Peaks",
-    "lat": 37.735276,
-    "lon": -122.458057
+    "name": "West Portal",
+    "lat": 37.73525,
+    "lon": -122.46006
   },
   {
     "name": "Western Addition",
-    "lat": 37.782733,
-    "lon": -122.431802
+    "lat": 37.78222,
+    "lon": -122.43179
   }
 ]

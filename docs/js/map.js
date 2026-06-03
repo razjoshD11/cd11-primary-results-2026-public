@@ -18,6 +18,8 @@
   };
   const DATA_URL = "./data/latest.json";
   const CANDIDATES_URL = "./data/candidates.json";
+  const NHOOD_URL = "./data/neighborhood_labels.json";
+  const NHOOD_HIDE_ZOOM = 15;  // hide neighborhood labels once zoomed in past this
 
   const PALETTE = ["#4477AA", "#EE6677", "#228833", "#CCBB44", "#66CCEE", "#AA3377", "#BBBBBB"];
 
@@ -54,6 +56,8 @@
   let colorMode = "leader";      // "leader" | a candidate name -> heat-map of that candidate's share
   let heatDomain = {};           // candidate name -> {min,max} observed precinct-share range
   const HEAT_NAMES = ["SCOTT WIENER", "CONNIE CHAN", "SAIKAT CHAKRABARTI"];
+  let nhoodLabels = null;        // [{name,lat,lon}] curated neighborhood labels
+  let nhoodLayer = null;         // Leaflet layerGroup of neighborhood label markers
 
   function initMap() {
     leafletMap = L.map(els.map, { zoomControl: true, scrollWheelZoom: true }).setView([37.7649, -122.4394], 12);
@@ -62,21 +66,34 @@
       subdomains: "abcd",
       maxZoom: 19,
     }).addTo(leafletMap);
-    // Street + place labels drawn ABOVE the choropleth so they stay legible.
-    // CARTO's label cartography is zoom-progressive on its own: neighborhood
-    // names when zoomed out, major streets at mid zoom, and smaller residential
-    // streets only when zoomed in tight. A dedicated pane above the choropleth
-    // (overlayPane z-index 400) with pointer-events off keeps precinct clicks
-    // working underneath.
-    leafletMap.createPane("labels");
-    leafletMap.getPane("labels").style.zIndex = 450;
-    leafletMap.getPane("labels").style.pointerEvents = "none";
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
-      attribution: "",
-      subdomains: "abcd",
-      pane: "labels",
-      maxZoom: 19,
-    }).addTo(leafletMap);
+    // Curated neighborhood labels are drawn in a dedicated pane ABOVE the
+    // choropleth (overlayPane z-index 400) with pointer-events off so precinct
+    // clicks still work underneath. We render OUR OWN labels (not CARTO's place
+    // labels, which reflow and collide on zoom) and hide them once zoomed in
+    // past NHOOD_HIDE_ZOOM so they don't clutter precinct-level inspection.
+    leafletMap.createPane("nhoodLabels");
+    leafletMap.getPane("nhoodLabels").style.zIndex = 650;
+    leafletMap.getPane("nhoodLabels").style.pointerEvents = "none";
+    leafletMap.on("zoomend", updateNeighborhoodLabelVisibility);
+  }
+
+  // Curated neighborhood labels (data/neighborhood_labels.json), positioned at
+  // geometry-derived centroids. Fixed positions -> they never reflow/collide on
+  // zoom the way the CARTO place labels did.
+  function buildNeighborhoodLabels() {
+    if (!leafletMap || !nhoodLabels) return;
+    nhoodLayer = L.layerGroup();
+    for (const n of nhoodLabels) {
+      const icon = L.divIcon({ className: "nhood-label", html: `<span>${escapeHtml(n.name)}</span>`, iconSize: [0, 0] });
+      L.marker([n.lat, n.lon], { icon, pane: "nhoodLabels", interactive: false, keyboard: false }).addTo(nhoodLayer);
+    }
+    updateNeighborhoodLabelVisibility();
+  }
+  function updateNeighborhoodLabelVisibility() {
+    if (!leafletMap || !nhoodLayer) return;
+    const show = leafletMap.getZoom() < NHOOD_HIDE_ZOOM;
+    if (show && !leafletMap.hasLayer(nhoodLayer)) nhoodLayer.addTo(leafletMap);
+    else if (!show && leafletMap.hasLayer(nhoodLayer)) leafletMap.removeLayer(nhoodLayer);
   }
 
   els.toggleButtons.forEach((btn) => {
@@ -133,6 +150,10 @@
             if (lastName && !candidates[lastName]) candidates[lastName] = value;
           }
         }
+      }
+      if (!nhoodLabels) {
+        const nRes = await fetch(NHOOD_URL, { cache: "no-store" });
+        if (nRes.ok) { nhoodLabels = await nRes.json(); buildNeighborhoodLabels(); }
       }
       const r = await fetch(DATA_URL, { cache: "no-store" });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -394,16 +415,40 @@
   }
   function computeHeatDomains(data) {
     heatDomain = {};
+    // Aggregate precinct votes up to supervisor districts so the SD heat map gets
+    // its own (narrower) min/max and still spans the full color ramp.
+    const sd = {};  // sd -> { total, byCand:{} }
+    for (const p of data.precincts || []) {
+      const k = precinctToSD.get(p.precinct);
+      if (k == null) continue;
+      const key = String(k);
+      sd[key] = sd[key] || { total: 0, byCand: {} };
+      for (const [c, v] of Object.entries(p.candidates || {})) {
+        sd[key].byCand[c] = (sd[key].byCand[c] || 0) + v;
+        sd[key].total += v;
+      }
+    }
     for (const n of HEAT_NAMES) {
-      let mn = Infinity, mx = -Infinity;
+      let pmn = Infinity, pmx = -Infinity;
       for (const p of data.precincts || []) {
         const t = p.total_votes || 0;
         if (!t) continue;
         const s = (p.candidates?.[n] || 0) / t;
-        if (s < mn) mn = s;
-        if (s > mx) mx = s;
+        if (s < pmn) pmn = s;
+        if (s > pmx) pmx = s;
       }
-      heatDomain[n] = mn === Infinity ? { min: 0, max: 1 } : { min: mn, max: mx };
+      let smn = Infinity, smx = -Infinity;
+      for (const key of Object.keys(sd)) {
+        const t = sd[key].total;
+        if (!t) continue;
+        const s = (sd[key].byCand[n] || 0) / t;
+        if (s < smn) smn = s;
+        if (s > smx) smx = s;
+      }
+      heatDomain[n] = {
+        precinct: pmn === Infinity ? { min: 0, max: 1 } : { min: pmn, max: pmx },
+        sup: smn === Infinity ? { min: 0, max: 1 } : { min: smn, max: smx },
+      };
     }
   }
   function shareForFeature(key, props, name) {
@@ -424,9 +469,14 @@
   function heatColorFor(key, props) {
     const share = shareForFeature(key, props, colorMode);
     if (share == null) return null;
-    const dom = heatDomain[colorMode] || { min: 0, max: 1 };
+    const dom = heatDomainFor(colorMode, key);
     const t = dom.max > dom.min ? (share - dom.min) / (dom.max - dom.min) : 0.5;
     return plasma(t);
+  }
+  function heatDomainFor(name, key) {
+    const d = heatDomain[name];
+    if (!d) return { min: 0, max: 1 };
+    return key === "sup" ? d.sup : d.precinct;
   }
   function displayName(n) {
     return String(n).split(/\s+/).map((w) => (w ? w[0] + w.slice(1).toLowerCase() : w)).join(" ");
@@ -553,8 +603,8 @@
 
     // Heat-map mode: gradient legend spanning the candidate's actual share range.
     if (colorMode !== "leader") {
-      const dom = heatDomain[colorMode];
-      if (!dom) return;
+      if (!heatDomain[colorMode]) return;
+      const dom = heatDomainFor(colorMode, granularity);
       legendControl = L.control({ position: "bottomright" });
       legendControl.onAdd = () => {
         const div = L.DomUtil.create("div", "legend");
