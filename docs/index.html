@@ -25,10 +25,17 @@
 </section>
 
 <section class="map-region">
-  <div class="map-toggle" role="tablist">
+  <div class="map-toggle" id="granularity-toggle" role="tablist" aria-label="Map granularity">
     <button data-granularity="precinct" class="active" role="tab" aria-selected="true">Precinct view</button>
     <button data-granularity="sup" role="tab" aria-selected="false">Supervisor district view</button>
     <button data-granularity="cd11" role="tab" aria-selected="false">All CD-11</button>
+  </div>
+  <div class="map-toggle color-toggle" id="colormode-toggle" role="tablist" aria-label="Color by">
+    <span class="toggle-label">Color by:</span>
+    <button data-colormode="leader" class="active" role="tab" aria-selected="true">Race leader</button>
+    <button data-colormode="SCOTT WIENER" role="tab" aria-selected="false">Scott Wiener</button>
+    <button data-colormode="CONNIE CHAN" role="tab" aria-selected="false">Connie Chan</button>
+    <button data-colormode="SAIKAT CHAKRABARTI" role="tab" aria-selected="false">Saikat Chakrabarti</button>
   </div>
   <div id="results-map" class="map-canvas"></div>
   <aside id="candidate-detail" class="side-panel hidden">

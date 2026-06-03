@@ -42,6 +42,10 @@ body {
 .leaflet-container:focus,
 .leaflet-container svg:focus,
 path.leaflet-interactive:focus { outline: none; }
+.color-toggle { margin-top: -0.4rem; align-items: center; }
+.toggle-label { align-self: center; font-size: 0.85rem; color: var(--color-muted); margin-right: 0.15rem; }
+.legend-gradient { height: 12px; width: 170px; border-radius: 2px; margin: 5px 0 3px; border: 1px solid #bbb; }
+.legend-scale { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--color-muted); }
 .side-panel {
   position: fixed; right: 0; top: 0; width: 400px; height: 100vh; background: white;
   box-shadow: -2px 0 12px rgba(0,0,0,0.1); padding: 1.25rem 1.5rem; overflow-y: auto; z-index: 1000;

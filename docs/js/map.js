@@ -32,7 +32,8 @@
     detailTitle: document.getElementById("detail-title"),
     detailBody: document.getElementById("detail-body"),
     closeDetail: document.getElementById("close-detail"),
-    toggleButtons: document.querySelectorAll(".map-toggle button"),
+    toggleButtons: document.querySelectorAll("#granularity-toggle button"),
+    colorButtons: document.querySelectorAll("#colormode-toggle button"),
   };
 
   let leafletMap = null;
@@ -50,6 +51,9 @@
   let precinctToSD = new Map();  // precinct id -> supervisor_district (from precinct GeoJSON)
   let selectedLayer = null;      // currently clicked feature (border-highlighted)
   const SELECTED_STYLE = { weight: 4, color: "#f89828" };  // border-only selection highlight
+  let colorMode = "leader";      // "leader" | a candidate name -> heat-map of that candidate's share
+  let heatDomain = {};           // candidate name -> {min,max} observed precinct-share range
+  const HEAT_NAMES = ["SCOTT WIENER", "CONNIE CHAN", "SAIKAT CHAKRABARTI"];
 
   function initMap() {
     leafletMap = L.map(els.map, { zoomControl: true, scrollWheelZoom: true }).setView([37.7649, -122.4394], 12);
@@ -87,6 +91,20 @@
     });
   });
   els.closeDetail.addEventListener("click", () => { els.detail.classList.add("hidden"); clearSelection(); });
+
+  // "Color by" toggle: race leader (categorical) vs. a single candidate's vote
+  // share (sequential heat map). Orthogonal to the precinct/SD/CD-11 granularity.
+  els.colorButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      els.colorButtons.forEach((b) => { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      colorMode = btn.dataset.colormode;
+      restyleActive();
+      updateTooltips();
+      renderLegend();
+    });
+  });
 
   async function tick() {
     try {
@@ -152,6 +170,7 @@
     }
 
     buildLeaderColorMap(data.candidates || []);
+    computeHeatDomains(data);
     renderCitywide(data.candidates || []);
     restyleActive();
     updateTooltips();
@@ -294,6 +313,21 @@
 
   function styleFor(key, feature) {
     const props = feature.properties || {};
+
+    // Heat-map mode: fill by the selected candidate's vote share (sequential ramp).
+    if (colorMode !== "leader") {
+      const fill = heatColorFor(key, props);
+      if (key === "precinct") {
+        if (fill == null) return { weight: 1, color: "#2a2a2a", fillOpacity: 0.08, fillColor: "#e0e0e0" };
+        return { weight: 1.4, color: "#2a2a2a", fillOpacity: 0.78, fillColor: fill };
+      }
+      if (key === "sup") {
+        return { weight: 3, color: "#1a1a1a", fillOpacity: fill ? 0.78 : 0.08, fillColor: fill || "#bbb" };
+      }
+      return { weight: 3.5, color: "#111", fillOpacity: fill ? 0.7 : 0.08, fillColor: fill || "#bbb" };
+    }
+
+    // Leader mode: fill by the race leader (categorical).
     const leader = leaderFor(key, props);
     if (key === "precinct") {
       const base = { weight: 1.4, color: "#2a2a2a", fillOpacity: 0.4, fillColor: "#e0e0e0" };
@@ -309,11 +343,19 @@
   }
 
   function tooltipFor(key, props) {
-    const leader = leaderFor(key, props);
     let title;
     if (key === "precinct") title = props.precinct_full_name || `PCT ${props.precinct}`;
     else if (key === "sup") title = `Supervisor District ${props.supervisor_district}`;
     else title = "All CD-11";
+
+    // Heat-map mode: show the selected candidate's share for this feature.
+    if (colorMode !== "leader") {
+      const share = shareForFeature(key, props, colorMode);
+      if (share == null) return escapeHtml(title);
+      return `<strong>${escapeHtml(title)}</strong><br>${escapeHtml(displayName(colorMode))} ${(share * 100).toFixed(1)}%`;
+    }
+
+    const leader = leaderFor(key, props);
     if (!leader) return escapeHtml(title);
     const pct = leadingPct(key, props, leader);
     return `<strong>${escapeHtml(title)}</strong><br>${escapeHtml(leader)} ${pct.toFixed(1)}%`;
@@ -334,6 +376,60 @@
     const total = cw.reduce((a, c) => a + (c.votes || 0), 0);
     const me = cw.find((c) => c.name === leader);
     return total && me ? (me.votes / total) * 100 : 0;
+  }
+
+  // ---- candidate heat-map coloring ------------------------------------------
+  // "Where is this candidate's vote share coming from" — a sequential plasma
+  // ramp (dark = low share, yellow = high). Each candidate is normalized to its
+  // OWN observed precinct-share range, because their ranges differ a lot
+  // (Wiener ~20-67%, Saikat ~3-30%); a shared scale would wash Saikat out.
+  // The exact % is always shown in the tooltip and the click panel.
+  const PLASMA = [[13, 8, 135], [126, 3, 168], [204, 71, 120], [248, 149, 64], [240, 249, 33]];
+  function plasma(t) {
+    t = Math.max(0, Math.min(1, t));
+    const x = t * (PLASMA.length - 1), i = Math.floor(x), f = x - i;
+    const a = PLASMA[i], b = PLASMA[Math.min(i + 1, PLASMA.length - 1)];
+    const m = (j) => Math.round(a[j] + (b[j] - a[j]) * f);
+    return `rgb(${m(0)},${m(1)},${m(2)})`;
+  }
+  function computeHeatDomains(data) {
+    heatDomain = {};
+    for (const n of HEAT_NAMES) {
+      let mn = Infinity, mx = -Infinity;
+      for (const p of data.precincts || []) {
+        const t = p.total_votes || 0;
+        if (!t) continue;
+        const s = (p.candidates?.[n] || 0) / t;
+        if (s < mn) mn = s;
+        if (s > mx) mx = s;
+      }
+      heatDomain[n] = mn === Infinity ? { min: 0, max: 1 } : { min: mn, max: mx };
+    }
+  }
+  function shareForFeature(key, props, name) {
+    if (key === "precinct") {
+      const d = analysisByPrecinct.get(props.precinct);
+      return d && d.total_votes ? (d.candidates?.[name] || 0) / d.total_votes : null;
+    }
+    if (key === "sup") {
+      const tally = tallySupDistrict(props.supervisor_district);
+      const total = Object.values(tally).reduce((a, b) => a + b, 0);
+      return total ? (tally[name] || 0) / total : null;
+    }
+    const cw = lastData?.candidates || [];
+    const total = cw.reduce((a, c) => a + (c.votes || 0), 0);
+    const me = cw.find((c) => c.name === name);
+    return total && me ? me.votes / total : null;
+  }
+  function heatColorFor(key, props) {
+    const share = shareForFeature(key, props, colorMode);
+    if (share == null) return null;
+    const dom = heatDomain[colorMode] || { min: 0, max: 1 };
+    const t = dom.max > dom.min ? (share - dom.min) / (dom.max - dom.min) : 0.5;
+    return plasma(t);
+  }
+  function displayName(n) {
+    return String(n).split(/\s+/).map((w) => (w ? w[0] + w.slice(1).toLowerCase() : w)).join(" ");
   }
 
   function updateTooltips() {
@@ -452,8 +548,28 @@
   // ---- legend ---------------------------------------------------------------
 
   function renderLegend() {
-    if (!leafletMap || !leaderColorMap.size) return;
+    if (!leafletMap) return;
     if (legendControl) { legendControl.remove(); legendControl = null; }
+
+    // Heat-map mode: gradient legend spanning the candidate's actual share range.
+    if (colorMode !== "leader") {
+      const dom = heatDomain[colorMode];
+      if (!dom) return;
+      legendControl = L.control({ position: "bottomright" });
+      legendControl.onAdd = () => {
+        const div = L.DomUtil.create("div", "legend");
+        const grad = `linear-gradient(to right, ${plasma(0)}, ${plasma(0.25)}, ${plasma(0.5)}, ${plasma(0.75)}, ${plasma(1)})`;
+        div.innerHTML = `<strong>${escapeHtml(displayName(colorMode))} &mdash; vote share</strong>` +
+          `<div class="legend-gradient" style="background:${grad}"></div>` +
+          `<div class="legend-scale"><span>${(dom.min * 100).toFixed(0)}%</span><span>${(dom.max * 100).toFixed(0)}%</span></div>`;
+        return div;
+      };
+      legendControl.addTo(leafletMap);
+      return;
+    }
+
+    // Leader mode: categorical swatches.
+    if (!leaderColorMap.size) return;
     const sorted = [...(lastData?.candidates || [])].sort((a, b) => (b.votes || 0) - (a.votes || 0));
     const shown = pickDisplay(sorted.map((c) => [c.name, c.votes || 0]));
     if (!shown.length) return;
